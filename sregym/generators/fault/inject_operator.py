@@ -4,7 +4,6 @@ import yaml
 
 from sregym.generators.fault.base import FaultInjector
 from sregym.service.kubectl import KubeCtl
-from kubernetes import client, config
 
 
 class K8SOperatorFaultInjector(FaultInjector):
@@ -237,37 +236,32 @@ class K8SOperatorFaultInjector(FaultInjector):
         """
         Fault: Replaces the operator pod image with a typo-version to trigger ImagePullBackOff.
         """
-        import subprocess
-
         # 1. Get the dynamic pod name and container name from the namespace
         # We use kubectl here because Pod names are not static like the 'basic' TidbCluster name
-        try:
-            pod_name = subprocess.getoutput("kubectl get pods -n tidb-operator -o jsonpath='{.items[0].metadata.name}'")
-            container_name = subprocess.getoutput(f"kubectl get pod {pod_name} -n tidb-operator -o jsonpath='{{.spec.containers[0].name}}'")
-        except Exception as e:
-            print(f"Failed to retrieve pod info: {e}")
-            return
+        pod_name = self.kubectl.exec_command(
+            "kubectl get pods -n tidb-operator -o jsonpath='{.items[0].metadata.name}'"
+        ).strip()
+        container_name = self.kubectl.exec_command(
+            f"kubectl get pod {pod_name} -n tidb-operator -o jsonpath='{{.spec.containers[0].name}}'"
+        ).strip()
 
         # 2. Define the fault manifest as a python dict
         cr_name = "wrong-operator-image-fault"
         pod_yaml = {
             "apiVersion": "v1",
             "kind": "Pod",
-            "metadata": {
-                "name": pod_name,
-                "namespace": "tidb-operator"
-            },
+            "metadata": {"name": pod_name, "namespace": "tidb-operator"},
             "spec": {
                 "containers": [
                     {
                         "name": container_name,
-                        "image": "pingcap/tidb-operatorr:v1.6.3" # Typo in 'operatorr'
+                        "image": "pingcap/tidb-operatorr:v1.6.3",  # Typo in 'operatorr'
                     }
                 ]
-            }
+            },
         }
 
-        # 3. Apply the fault using your internal helper
+        # 3. Apply the fault
         yaml_path = f"/tmp/{cr_name}.yaml"
         with open(yaml_path, "w") as file:
             yaml.dump(pod_yaml, file)
@@ -277,39 +271,26 @@ class K8SOperatorFaultInjector(FaultInjector):
         result = self.kubectl.exec_command(command)
         print(f"Injected {cr_name}: {result}")
 
-
     def recover_wrong_operator_image(self):
-        import subprocess
-
         # 1. Get the dynamic pod name and container name from the namespace
         # We use kubectl here because Pod names are not static like the 'basic' TidbCluster name
-        try:
-            pod_name = subprocess.getoutput("kubectl get pods -n tidb-operator -o jsonpath='{.items[0].metadata.name}'")
-            container_name = subprocess.getoutput(f"kubectl get pod {pod_name} -n tidb-operator -o jsonpath='{{.spec.containers[0].name}}'")
-        except Exception as e:
-            print(f"Failed to retrieve pod info: {e}")
-            return
+        pod_name = self.kubectl.exec_command(
+            "kubectl get pods -n tidb-operator -o jsonpath='{.items[0].metadata.name}'"
+        ).strip()
+        container_name = self.kubectl.exec_command(
+            f"kubectl get pod {pod_name} -n tidb-operator -o jsonpath='{{.spec.containers[0].name}}'"
+        ).strip()
 
         # 2. Define the fault manifest as a python dict
         cr_name = "recover-wrong-operator-image-fault"
         pod_yaml = {
             "apiVersion": "v1",
             "kind": "Pod",
-            "metadata": {
-                "name": pod_name,
-                "namespace": "tidb-operator"
-            },
-            "spec": {
-                "containers": [
-                    {
-                        "name": container_name,
-                        "image": "pingcap/tidb-operator:v1.6.3"
-                    }
-                ]
-            }
+            "metadata": {"name": pod_name, "namespace": "tidb-operator"},
+            "spec": {"containers": [{"name": container_name, "image": "pingcap/tidb-operator:v1.6.3"}]},
         }
 
-        # 3. Apply the fault using your internal helper
+        # 3. Recover the fault
         yaml_path = f"/tmp/{cr_name}.yaml"
         with open(yaml_path, "w") as file:
             yaml.dump(pod_yaml, file)
@@ -318,7 +299,6 @@ class K8SOperatorFaultInjector(FaultInjector):
         print(f"Namespace: {self.namespace}")
         result = self.kubectl.exec_command(command)
         print(f"Injected {cr_name}: {result}")
-
 
     def recover_fault(self, cr_name: str):
         self._delete_yaml(cr_name)
