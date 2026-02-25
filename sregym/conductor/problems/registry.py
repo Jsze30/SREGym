@@ -21,7 +21,6 @@ from sregym.conductor.problems.incorrect_port_assignment import IncorrectPortAss
 from sregym.conductor.problems.ingress_misroute import IngressMisroute
 from sregym.conductor.problems.kafka_queue_problems import KafkaQueueProblems
 from sregym.conductor.problems.khaos_faults import KhaosFaultName, KhaosFaultProblem
-from sregym.conductor.problems.kubelet_crash import KubeletCrash
 from sregym.conductor.problems.liveness_probe_misconfiguration import LivenessProbeMisconfiguration
 from sregym.conductor.problems.liveness_probe_too_aggressive import LivenessProbeTooAggressive
 from sregym.conductor.problems.llm_inaccurate_response import LlmInaccurateResponse
@@ -41,8 +40,8 @@ from sregym.conductor.problems.operator_misoperation.invalid_affinity_toleration
 from sregym.conductor.problems.operator_misoperation.non_existent_storage import K8SOperatorNonExistentStorageFault
 from sregym.conductor.problems.operator_misoperation.overload_replicas import K8SOperatorOverloadReplicasFault
 from sregym.conductor.problems.operator_misoperation.security_context_fault import K8SOperatorSecurityContextFault
-from sregym.conductor.problems.operator_misoperation.wrong_update_strategy import K8SOperatorWrongUpdateStrategyFault
 from sregym.conductor.problems.operator_misoperation.wrong_operator_image import K8SOperatorWrongOperatorImage
+from sregym.conductor.problems.operator_misoperation.wrong_update_strategy import K8SOperatorWrongUpdateStrategyFault
 from sregym.conductor.problems.payment_service_failure import PaymentServiceFailure
 from sregym.conductor.problems.payment_service_unreachable import PaymentServiceUnreachable
 from sregym.conductor.problems.persistent_volume_affinity_violation import PersistentVolumeAffinityViolation
@@ -64,7 +63,9 @@ from sregym.conductor.problems.stale_coredns_config import StaleCoreDNSConfig
 from sregym.conductor.problems.storage_user_unregistered import MongoDBUserUnregistered
 from sregym.conductor.problems.taint_no_toleration import TaintNoToleration
 from sregym.conductor.problems.target_port import K8STargetPortMisconfig
-from sregym.conductor.problems.top_of_rack_router_failure_hotel_reservation import TopOfRackRouterPartitionHotelReservation
+from sregym.conductor.problems.top_of_rack_router_failure_hotel_reservation import (
+    TopOfRackRouterPartitionHotelReservation,
+)
 from sregym.conductor.problems.train_ticket_f22 import TrainTicketF22
 from sregym.conductor.problems.trainticket_f17 import TrainTicketF17
 from sregym.conductor.problems.update_incompatible_correlated import UpdateIncompatibleCorrelated
@@ -175,7 +176,6 @@ class ProblemRegistry:
             "silent_data_corruption": SilentDataCorruption,
 
             "latent_sector_error": lambda: KhaosFaultProblem(KhaosFaultName.latent_sector_error),
-            "read_error": lambda: KhaosFaultProblem(KhaosFaultName.read_error),
             # "pread_error": lambda: KhaosFaultProblem(KhaosFaultName.pread_error),
             # "write_error": lambda: KhaosFaultProblem(KhaosFaultName.write_error),
             # "pwrite_error": lambda: KhaosFaultProblem(KhaosFaultName.pwrite_error),
@@ -259,7 +259,7 @@ class ProblemRegistry:
             #     LivenessProbeTooAggressive(app_name="social_network"),
             # ]),
             # ad hoc:
-            "kubelet_crash": KubeletCrash,
+            # "kubelet_crash": KubeletCrash,
             "workload_imbalance": WorkloadImbalance,
             # ==================== K8S OPERATOR MISOPERATION ==================
             "operator_overload_replicas": K8SOperatorOverloadReplicasFault,
