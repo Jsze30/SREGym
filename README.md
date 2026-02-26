@@ -157,12 +157,7 @@ python main.py --agent stratus --model bedrock-claude-sonnet-4.5
 ## Acknowledgements
 This project is generously supported by a Slingshot grant from the [Laude Institute](https://www.laude.org/).
 
-
-
-[laude](https://github.com/user-attachments/assets/72d79177-c9b7-40ed-999f-d153ef126c0d)
-
-
-
+https://github.com/user-attachments/assets/e7b2ee27-e7a9-436a-858d-ee58e8bbd61d
 
 ## License
 Licensed under the [MIT](LICENSE.txt) license.
