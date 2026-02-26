@@ -11,11 +11,7 @@
 [![Slack](https://img.shields.io/badge/-Slack-4A154B?style=flat-square&logo=slack&logoColor=white)](https://join.slack.com/t/SREGym/shared_invite/zt-3gvqxpkpc-RvCUcyBEMvzvXaQS9KtS_w)
 </div>
 
-<div align="center">
-  <video src="assets/laude-demo.webm" width="600" autoplay loop muted playsinline>
-    Your browser does not support the video tag.
-  </video>
-</div>
+https://github.com/SREGym/SREGym/raw/main/assets/laude-demo.webm
 
 <h2 id="overview">🔍 Overview</h2>
 SREGym is an AI-native platform to enable the design, development, and evaluation of AI agents for Site Reliability Engineering (SRE). The core idea is to create live system environments for SRE agents to solve real-world SRE problems. SREGym provides a comprehensive SRE benchmark suite with a wide variety of problems for evaluating SRE agents and also for training next-generation AI agents.
@@ -162,11 +158,7 @@ python main.py --agent stratus --model bedrock-claude-sonnet-4.5
 
 ## Acknowledgements
 This project is generously supported by a Slingshot grant from the [Laude Institute](https://www.laude.org/).
-<div align="center">
-  <video src="assets/laude-interview.webm" width="600" autoplay loop muted playsinline>
-    Your browser does not support the video tag.
-  </video>
-</div>
+https://github.com/SREGym/SREGym/raw/main/assets/laude-interview.webm
 
 ## License
 Licensed under the [MIT](LICENSE.txt) license.
