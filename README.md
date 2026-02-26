@@ -12,10 +12,9 @@
 </div>
 
 <div align="center">
-  <a href="https://www.youtube.com/watch?v=mmpW36WdFbI&t=37m30s">
-    <img src="https://img.youtube.com/vi/mmpW36WdFbI/maxresdefault.jpg" alt="SREGym Demo Video" width="600">
-  </a>
-  <p><em>About SREGym</em></p>
+  <video src="assets/laude-demo.webm" width="600" autoplay loop muted playsinline>
+    Your browser does not support the video tag.
+  </video>
 </div>
 
 <h2 id="overview">🔍 Overview</h2>
@@ -163,6 +162,11 @@ python main.py --agent stratus --model bedrock-claude-sonnet-4.5
 
 ## Acknowledgements
 This project is generously supported by a Slingshot grant from the [Laude Institute](https://www.laude.org/).
+<div align="center">
+  <video src="assets/laude-interview.webm" width="600" autoplay loop muted playsinline>
+    Your browser does not support the video tag.
+  </video>
+</div>
 
 ## License
 Licensed under the [MIT](LICENSE.txt) license.
