@@ -46,7 +46,6 @@ Before contributing, please:
 - [brew](https://docs.brew.sh/Homebrew-and-Python)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 - [uv](https://github.com/astral-sh/uv) (recommended for dependency management)
-- [prek](https://github.com/j178/prek) (for git hooks)
 
 ### Installation
 
@@ -65,7 +64,7 @@ Before contributing, please:
 
 4. Install git hooks via prek:
    ```bash
-   prek install
+   uv run prek install
    ```
 
 5. Set up your cluster (see [README.md](README.md#🚀quickstart) for options)
@@ -143,7 +142,7 @@ uv run black .
 uv run isort .
 
 # Run all hooks manually
-prek run --all-files
+uv run prek run --all-files
 ```
 
 #### Code Quality Best Practices

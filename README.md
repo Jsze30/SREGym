@@ -29,7 +29,6 @@ SREGym is inspired by our prior work on AIOpsLab and ITBench. It is architecture
 - [brew](https://docs.brew.sh/Homebrew-and-Python)
 - [kubectl](https://kubernetes.io/docs/tasks/tools/)
 - [uv](https://github.com/astral-sh/uv)
-- [prek](https://github.com/j178/prek) (for git hooks)
 - [kind](https://kind.sigs.k8s.io/) (if running locally)
 
 ### Recommendations
@@ -40,7 +39,7 @@ SREGym is inspired by our prior work on AIOpsLab and ITBench. It is architecture
 git clone --recurse-submodules https://github.com/SREGym/SREGym
 cd SREGym
 uv sync
-prek install
+uv run prek install
 ```
 
 <h2 id="🚀quickstart">🚀 Quickstart</h2>
