@@ -19,6 +19,7 @@ class Tags:
     application: str
     diagnosis_success: bool
     mitigation_success: bool
+    resolution_success: bool
     overall_success: bool
 
 
@@ -100,6 +101,11 @@ def diagnosis_success(problem_id: str) -> bool:
 def mitigation_success(problem_id: str) -> bool:
     row = _csv_row(problem_id)
     return _as_bool(row.get("Mitigation.success"))
+
+
+def resolution_success(problem_id: str) -> bool:
+    row = _csv_row(problem_id)
+    return _as_bool(row.get("Resolution.success"))
 
 
 def overall_success(problem_id: str) -> bool:
@@ -653,6 +659,7 @@ class SummaryRow:
     # stage-specific + overall outcomes for filtering
     diagnosis_ok: str
     mitigation_ok: str
+    resolution_ok: str
     overall_ok: str
 
 
@@ -674,6 +681,7 @@ class IndexRow:
 
     diagnosis_ok: str
     mitigation_ok: str
+    resolution_ok: str
     overall_ok: str
 
 
@@ -733,15 +741,18 @@ def summarize_record(rec: dict[str, Any], idx: int, file_problem_id: str) -> Sum
 
     diag_ok = False
     mit_ok = False
+    res_ok = False
     ov_ok = False
     if problem_id:
         try:
             diag_ok = diagnosis_success(problem_id)
             mit_ok = mitigation_success(problem_id)
+            res_ok = resolution_success(problem_id)
             ov_ok = diag_ok and mit_ok
         except Exception:
             diag_ok = False
             mit_ok = False
+            res_ok = False
             ov_ok = False
 
     if problem_id and problem_id not in tags_by_problem_id:
@@ -750,6 +761,7 @@ def summarize_record(rec: dict[str, Any], idx: int, file_problem_id: str) -> Sum
             application=application,
             diagnosis_success=diag_ok,
             mitigation_success=mit_ok,
+            resolution_success=res_ok,
             overall_success=ov_ok,
         )
 
@@ -770,6 +782,7 @@ def summarize_record(rec: dict[str, Any], idx: int, file_problem_id: str) -> Sum
         application=application,
         diagnosis_ok="true" if diag_ok else "false",
         mitigation_ok="true" if mit_ok else "false",
+        resolution_ok="true" if res_ok else "false",
         overall_ok="true" if ov_ok else "false",
     )
 
@@ -795,12 +808,14 @@ def summarize_index_row(
         application = as_str(t.application) or "unknown"
         diag_ok = bool(t.diagnosis_success)
         mit_ok = bool(t.mitigation_success)
+        res_ok = bool(t.resolution_success)
         ov_ok = bool(t.overall_success)
     else:
         namespace = "default"
         application = "unknown"
         diag_ok = False
         mit_ok = False
+        res_ok = False
         ov_ok = False
 
     return IndexRow(
@@ -818,6 +833,7 @@ def summarize_index_row(
         application=application,
         diagnosis_ok="true" if diag_ok else "false",
         mitigation_ok="true" if mit_ok else "false",
+        resolution_ok="true" if res_ok else "false",
         overall_ok="true" if ov_ok else "false",
     )
 
@@ -1056,6 +1072,7 @@ def render_index_chips(r: IndexRow) -> str:
     parts.append(chip("app", r.application, "application"))
     parts.append(chip("diag", r.diagnosis_ok, "diagnosis"))
     parts.append(chip("mit", r.mitigation_ok, "mitigation"))
+    parts.append(chip("res", r.resolution_ok, "resolution"))
     parts.append(chip("overall", r.overall_ok, "overall"))
     parts = [p for p in parts if p]
     if not parts:
@@ -1100,6 +1117,7 @@ def render_file_report(
                     r.application,
                     r.diagnosis_ok,
                     r.mitigation_ok,
+                    r.resolution_ok,
                     r.overall_ok,
                 ]
             )
@@ -1153,6 +1171,7 @@ def render_file_report(
                     r.rec_type,
                     r.diagnosis_ok,
                     r.mitigation_ok,
+                    r.resolution_ok,
                     r.overall_ok,
                 ]
             )
@@ -1241,6 +1260,7 @@ def render_file_report(
             f"<div class='k'>Application</div><div>{escape(s.application)}</div>"
             f"<div class='k'>Diagnosis</div><div>{escape(s.diagnosis_ok)}</div>"
             f"<div class='k'>Mitigation</div><div>{escape(s.mitigation_ok)}</div>"
+            f"<div class='k'>Resolution</div><div>{escape(s.resolution_ok)}</div>"
             f"<div class='k'>Overall</div><div>{escape(s.overall_ok)}</div>"
             "</div></div>"
         )
@@ -1368,6 +1388,7 @@ def main():
                 r.application,
                 r.diagnosis_ok,
                 r.mitigation_ok,
+                r.resolution_ok,
                 r.overall_ok,
             ]
         )
@@ -1383,6 +1404,7 @@ def main():
             f"data-application='{escape(r.application)}' "
             f"data-diagnosis='{escape(r.diagnosis_ok)}' "
             f"data-mitigation='{escape(r.mitigation_ok)}' "
+            f"data-resolution='{escape(r.resolution_ok)}' "
             f"data-overall='{escape(r.overall_ok)}' "
             f"data-search='{escape(search_blob)}'>"
             f"<td><a href='{escape(r.link)}'>{escape(r.source_file)}</a></td>"

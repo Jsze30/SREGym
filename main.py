@@ -168,11 +168,19 @@ def driver_loop(
                         agent_proc.proc.poll()
                         if agent_proc.proc.returncode is not None:
                             console.log(f"⚠️  Agent process exited with return code {agent_proc.proc.returncode}")
-                            # Wait for any in-progress background evaluation to finish
-                            eval_wait = 0
-                            while eval_wait < 120 and conductor.submission_stage != "done":
-                                await asyncio.sleep(1)
-                                eval_wait += 1
+                            # Wait for the conductor's background evaluation to finish.
+                            # await the conductor's submit_future
+                            if conductor._submit_future is not None and not conductor._submit_future.done():
+                                console.log("⏳ Waiting for conductor evaluation to complete...")
+                                try:
+                                    await asyncio.wait_for(
+                                        asyncio.wrap_future(conductor._submit_future),
+                                        timeout=300,
+                                    )
+                                except TimeoutError:
+                                    console.log("⚠️  Conductor evaluation did not finish within 300s")
+                                except Exception as e:
+                                    console.log(f"⚠️  Conductor evaluation raised: {e}")
                             break
                     await asyncio.sleep(1)
 

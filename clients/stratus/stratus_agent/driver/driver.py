@@ -445,7 +445,7 @@ async def mitigation_task_main(diagnosis_summary):
         agent_exec_stats["oracle_results"] = "N/A"
         # agent_exec_stats["last_state"] = last_state
         logger.info(f"Finished localization agent run, output dict: {agent_exec_stats}")
-        return agent_exec_stats, all_graph_events
+        return agent_exec_stats, all_graph_events, last_state
 
     elif mitigation_agent_retry_mode == "naive":
         # if the retry mode is naive, run mitigation agent with retry but no rollback agent.
@@ -508,7 +508,7 @@ async def mitigation_task_main(diagnosis_summary):
         agent_exec_stats["num_retry_attempts"] = num_retry_attempts_lst
         agent_exec_stats["rollback_stack"] = rollback_stack_lst
         agent_exec_stats["oracle_results"] = oracle_results_lst
-        return agent_exec_stats, all_graph_events
+        return agent_exec_stats, all_graph_events, last_state
     elif mitigation_agent_retry_mode == "validate":
         logger.info(f"retry mode: [{mitigation_agent_retry_mode}]")
         # if the retry mode is validation, run mitigation agent with rollback and weak oracle.
@@ -643,7 +643,7 @@ async def mitigation_task_main(diagnosis_summary):
         agent_exec_stats["num_retry_attempts"] = num_retry_attempts_lst
         agent_exec_stats["rollback_stack"] = rollback_stack_lst
         agent_exec_stats["oracle_results"] = oracle_results_lst
-        return agent_exec_stats, all_graph_events
+        return agent_exec_stats, all_graph_events, mitigation_agent_last_state
 
 
 async def main():
@@ -739,6 +739,7 @@ async def main():
     benchmark_status = get_benchmark_status()
     logger.info(f"Benchmark status after diagnosis: {benchmark_status}")
 
+    mitigation_last_state = None
     if benchmark_status == "done":
         logger.info(
             "Benchmark is already in 'done' status. Skipping mitigation agent. "
@@ -748,7 +749,9 @@ async def main():
         # run mitigation task 1 time for mitigation
         # it includes retry logics
         logger.info("*" * 25 + " Starting [mitigation agent] for [mitigation] " + "*" * 25)
-        mitigation_agent_exec_stats, mitigation_graph_events = await mitigation_task_main(diagnosis_fault_summary)
+        mitigation_agent_exec_stats, mitigation_graph_events, mitigation_last_state = await mitigation_task_main(
+            diagnosis_fault_summary
+        )
         all_trajectories.extend(mitigation_graph_events)
         agent_names.extend(mitigation_agent_exec_stats["agent_name"])
         agent_in_tokens.extend(mitigation_agent_exec_stats["input_tokens"])
